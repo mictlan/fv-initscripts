@@ -25,3 +25,5 @@ case "${SOUND_DEV}" in
           #Hello World!
           #EOF
           /etc/init.d/jackd start
+          ;;
+esac
