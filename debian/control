@@ -6,8 +6,8 @@ Uploaders: Mictlan Tecutli <mictlan@ki-ai.org>
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.8.0
 Homepage: http://radio.flujos.org/
-Vcs-Browser: http://live.debian.net/gitweb/?p=live-initscripts.git
-Vcs-Git: git://live.debian.net/git/live-initscripts.git
+Vcs-Browser: http://github.com/mictlan/fv-initscripts.git
+Vcs-Git: git://github.com/mictlan/fv-initscripts.git
 
 Package: fv-initscripts
 Architecture: all

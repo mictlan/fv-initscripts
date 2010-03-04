@@ -3,9 +3,9 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
-#upstream:
-#	cd .. && git clone git://git.debian.org/git/users/daniel/live-initscripts.git || true
-#	rm -rf ../live-initscripts/.git
+upstream:
+	cd .. && git clone git@github.com:mictlan/fv-initscripts.git || true
+	rm -rf ../fv-initscripts/.git
 
 build:
 
@@ -25,8 +25,8 @@ install: build
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/fv-initscripts
 
 	# Removing double files
-	rm -f debian/fv-initscripts/usr/share/doc/live-initscripts/COPYING
-	rm -f debian/fv-initscripts/usr/share/doc/live-initscripts/ChangeLog
+	rm -f debian/fv-initscripts/usr/share/doc/fv-initscripts/COPYING
+	rm -f debian/fv-initscripts/usr/share/doc/fv-initscripts/ChangeLog
 
 binary-arch: build install
 
