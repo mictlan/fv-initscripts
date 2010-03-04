@@ -1,0 +1,27 @@
+#!/bin/sh
+
+SOUND_DEV=alsa
+
+set -e
+
+for ARGUMENT in $(cat /proc/cmdline); do
+  case "${ARGUMENT}" in
+        audio=*)
+        SOUND_DEV="${ARGUMENT#sound=}"
+        ;;
+  esac
+done
+
+case "${SOUND_DEV}" in
+        alsa)
+          exit 0
+        ;;
+        jack)
+          if [ -f /etc/darkice.cfg  ]; then
+              rm /etc/darkice.cfg
+          fi
+          ln -s /etc/darkice.cfg.jack /etc/darkice.cfg
+          #cat > /home/radio/.config/autostart/jackd.desktop << EOF
+          #Hello World!
+          #EOF
+          /etc/init.d/jackd start

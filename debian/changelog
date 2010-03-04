@@ -1,0 +1,16 @@
+fv-initscripts (0+nmu1) UNRELEASED; urgency=low
+
+  * Non-maintainer upload.
+  * copy live-initscript
+  * add hielo, ad-hoc
+  * remove automount, apt-update
+  * edit debian packaging files
+  * rename fv-initscripts
+
+ -- Mictlan Tecutli <mictlan@ki-ai.org>  Thu, 04 Mar 2010 11:26:15 -0600
+
+live-initscripts (0) UNRELEASED; urgency=low
+
+  * Initial release.
+
+ -- Daniel Baumann <daniel@debian.org>  Mon, 11 May 2007 00:00:00 +0200

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -e
+
+grep -qs " ad-hoc" /proc/cmdline || exit 0
+
+case "${1}" in
+	start)
+		logger "do we have a wireless device?"
+        DEV=$(iwconfig 2> /dev/null|grep IEEE| awk '{ print $1}')
+        logger "setting up wifi" 
+        iwconfig $DEV mode ad-hoc essid XYZ
+        logger "asigning address"
+        ifconfig $DEV 10.10.10.10
+        logger "scanning..."
+        iwlist $DEV scan |grep ESSID
+        ;;
+esac

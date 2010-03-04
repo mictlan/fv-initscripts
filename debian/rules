@@ -1,0 +1,50 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+#upstream:
+#	cd .. && git clone git://git.debian.org/git/users/daniel/live-initscripts.git || true
+#	rm -rf ../live-initscripts/.git
+
+build:
+
+clean:
+	dh_testdir
+	dh_testroot
+
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_prep
+	dh_installdirs
+
+	# Installing package
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/fv-initscripts
+
+	# Removing double files
+	rm -f debian/fv-initscripts/usr/share/doc/live-initscripts/COPYING
+	rm -f debian/fv-initscripts/usr/share/doc/live-initscripts/ChangeLog
+
+binary-arch: build install
+
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs docs/ChangeLog
+	dh_installdocs
+	dh_install
+	dh_installinit --name apt-upgrade --onlyscripts --no-restart-on-upgrade --no-start -- start 99 2 6 .
+	dh_installinit --name iptables --onlyscripts --no-restart-on-upgrade --no-start -- start 99 2 6 .
+	dh_installinit --name automount --onlyscripts --no-restart-on-upgrade --no-start -- start 16 2 6 .
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install

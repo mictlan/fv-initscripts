@@ -1,0 +1,22 @@
+Source: fv-initscripts
+Section: misc
+Priority: optional
+Maintainer: Flujos-Vivos <laboratorios@radio.flujos.org. >
+Uploaders: Mictlan Tecutli <mictlan@ki-ai.org>
+Build-Depends: debhelper (>= 5)
+Standards-Version: 3.8.0
+Homepage: http://radio.flujos.org/
+Vcs-Browser: http://live.debian.net/gitweb/?p=live-initscripts.git
+Vcs-Git: git://live.debian.net/git/live-initscripts.git
+
+Package: fv-initscripts
+Architecture: all
+Description: Flujos Vivos init scripts
+ fv-initscripts is part of Flujos Vivos. It is a collection of
+ scripts that runs during init time.
+ .
+ It is aimed to add modularity and ease of customisation to debian-live for
+ tasks that do not need to be done in early userspace (i.e inside initramfs).
+ .
+ You probably do not want to install this package onto a non-live system,
+ although it will do no harm.

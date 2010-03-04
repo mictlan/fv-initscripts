@@ -1,0 +1,44 @@
+#!/bin/sh
+
+set -e
+
+grep -qs " hielo" /proc/cmdline || exit 0
+
+SERVER=localhost
+MOUNT=flujos.ogg
+PORT=8000
+PASSWORD=hackme
+
+case "${1}" in
+	start)
+		logger "congelando"
+        logger "servidor de flujos"
+        icecast2 -b -c /etc/icecast2/icecast.xml > /dev/null
+        logger "record volumen a 85%, entrada: mic"
+        aumix -v0 -m R -i85
+        sleep 1
+        logger "darkice"
+        for ARGUMENT in $(cat /proc/cmdline); do
+          case "${ARGUMENT}" in
+                server=*)
+                SERVER="${ARGUMENT#server=}"
+                ;;
+                mount=*)
+                MOUNT="${ARGUMENT#mount=}"
+                ;;
+                password=*)
+                PASSWORD="${ARGUMENT#password=}"
+                ;;
+                port=*)
+                PORT="${ARGUMENT#PORT=}"
+                ;;
+          esac
+        done
+        #darkice -c /etc/darkice.cfg > /dev/null &
+        logger "grabar audio y enviarlo a $SERVER:$PORT/$MOUNT"
+        arecord -d0 -c2 -f S16_LE -r 44100 -twav | \ 
+        oggenc --quiet - -o  - | \ 
+        oggfwd -p -n flujos-vivos -u http://radio.flujos.org \
+        $SERVER $PORT $PASSWORD /$MOUNT &
+        ;;
+esac

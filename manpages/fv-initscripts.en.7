@@ -1,0 +1,30 @@
+.TH LIVE\-INITSCRIPTS 7 "2007\-06\-04" "1.87.6" "live\-initscripts"
+
+.SH NAME
+fv\-initscripts \- Flujos-vivos init scripts
+
+.SH DESCRIPTION
+fv\-initscripts is part of flujos\-vivos. It is a collection of scripts that runs during init time.
+.PP
+It is aimed to add modularity and ease of customisation to flujos\-vivos for tasks that do not need to be done in early userspace (i.e inside initramfs).
+.PP
+You probably do not want to install this package onto a non\-live system, although it will do no harm.
+
+.SH BOOT OPTIONS
+Here is the complete list of recognized boot parameters by fv\-initscripts.
+.IP "\fBhielo\fR" 4
+conects starts icecast2, opens microfone for recording and streams it to localhost.
+
+.SH SEE ALSO
+\fIlive\-initscripts\fR(7)
+.PP
+\fIlive\-initramfs\fR(7)
+
+.SH BUGS
+Report bugs against fv\-initscripts <\fIhttp://flujos.org/mailman/listinfo/laboratorios_radio.flujos.org\fR>.
+
+.SH HOMEPAGE
+More information about the Flujos Vivos can be found at <\fIhttp://radio.flujos.org/\fR> and <\fIhttp://wiki.flujos.org/\fR>.
+
+.SH AUTHORS
+fv\-initscripts was written by Mictlan Tecutli <\fImictlan@ki-ai.org\fR> for Flujos Vivos.
