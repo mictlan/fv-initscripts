@@ -7,7 +7,7 @@ fv-initscripts (0+nmu1) UNRELEASED; urgency=low
   * edit debian packaging files
   * rename fv-initscripts
 
- -- Mictlan Tecutli <mictlan@ki-ai.org>  Thu, 04 Mar 2010 11:26:15 -0600
+ -- Mictlan Tecutli <mictlan@acervo.org>  Thu, 04 Mar 2010 11:26:15 -0600
 
 live-initscripts (0) UNRELEASED; urgency=low
 
