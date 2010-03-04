@@ -1,6 +1,7 @@
 Initscripts para  Flujos Vivos
 
-Agregan opciones de arranque. esos agregas a la linea de comados al momento de arrancar flujos-vivos. los que funcionan ahora son:
+Agregan opciones de arranque. esos agregas a la linea de comandos 
+al momento de arrancar flujos-vivos. los que funcionan ahora son:
 
 hielo - arrancar un flujos al terminar processo de arracar el CPU.
 server - cambiar el servidor para 'hielo', predeterminado es localhost
