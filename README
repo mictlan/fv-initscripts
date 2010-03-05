@@ -3,8 +3,8 @@ Initscripts para  Flujos Vivos
 Agregan opciones de arranque. esos agregas a la linea de comandos 
 al momento de arrancar flujos-vivos. los que funcionan ahora son:
 
-hielo - arrancar un flujos al terminar processo de arracar el CPU.
+hielo - arrancar un flujos al terminar proceso de arrancar el CPU.
 server - cambiar el servidor para 'hielo', predeterminado es localhost
 port - cambiar puerto de hielo, predeterminado es 8000
-mount - cambiar punto de montaje de hielo, predterminado es flujos.ogg
-password - cambiar contrasena de hielo, predeterminado es hackme
+mount - cambiar punto de montaje de hielo, predeterminado es flujos.ogg
+password - cambiar contraseña de hielo, predeterminado es hackme
