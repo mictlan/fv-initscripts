@@ -1,0 +1,212 @@
+#!/bin/sh
+
+SOUND_DEV=alsa
+auto_start=/home/radio/.config/autostart/jackd-autostart.desktopetc/darkice.cfg
+
+set -e
+
+for ARGUMENT in $(cat /proc/cmdline); do
+  case "${ARGUMENT}" in
+        audio=*)
+        SOUND_DEV="${ARGUMENT#audio=}"
+        ;;
+  esac
+done
+
+case "${SOUND_DEV}" in
+        alsa)
+          logger "fv: nothing to do, dev=${SOUND_DEV}"
+          exit 0
+        ;;
+        jack)
+
+          logger "fv: setup audio=${SOUND_DEV}"
+          logger "fv: setup darkice"
+          if [ -f /etc/darkice.cfg  ]; then
+              rm /etc/darkice.cfg
+          fi
+          ln -s /etc/darkice.cfg.jack /etc/darkice.cfg
+          logger "fv: let xfce4 start jackd"
+          cat > $auto_start << EOF
+[Desktop Entry]
+Type=Application
+Name=jackd
+Comment=Arrancar Jackd
+TryExec=jackd
+Exec=jackd
+Icon=xfce4-notes-plugin
+Terminal=false
+Hidden=false
+EOF
+          logger "fv: let audacity use jackd"
+          if [ ! -f /home/radio/.audacity_data ]; then
+              mkdir /home/radio/.audacity_data
+          fi
+          cat > /home/radio/.audacity_data/audacity.cfg << EOF
+NewPrefsInitialized=1
+Version=1.3.11-beta
+PrefsVersion=1.1.1r1
+SnapTo=0
+SelectionFormat=hh:mm:ss
+[Directories]
+TempDir=/tmp/audacity-radio
+PresetsDir=/home/radio/.audacity-data/presets
+AutoSaveEnabled=1
+AutoSaveMinutes=2
+CacheBlockFiles=0
+CacheLowMem=16
+[AudioIO]
+RecordingDevice=JACK Audio Connection Kit: system
+Host=JACK Audio Connection Kit
+PlaybackDevice=JACK Audio Connection Kit: system
+RecordChannels=1
+EffectsPreviewLen=3
+CutPreviewBeforeLen=1
+CutPreviewAfterLen=1
+SeekShortPeriod=1
+SeekLongPeriod=15
+Duplex=1
+SWPlaythrough=0
+LatencyDuration=100
+LatencyCorrection=-130
+SoundActivatedRecord=0
+SilenceLevel=-50
+[GUI]
+ErgonomicTransportButtons=1
+ShowSplashScreen=1
+EnvdBRange=60
+Help=Local
+QuitOnClose=1
+BeepOnCompletion=0
+AutoScroll=1
+TracksFitVerticallyZoomed=0
+DefaultViewMode=0
+SelectAllOnNone=1
+EnableCutLines=0
+AdjustSelectionEdges=1
+CircularTrackNavigation=0
+EditClipCanMove=1
+Solo=Standard
+EmptyCanBeDirty=1
+[GUI/ToolBars]
+[GUI/ToolBars/Tools]
+MultiToolActive=1
+Dock=1
+Order=2
+Show=1
+X=-1
+Y=-1
+W=94
+H=55
+[GUI/ToolBars/Control]
+Dock=1
+Order=1
+Show=1
+X=-1
+Y=-1
+W=327
+H=55
+[GUI/ToolBars/Meter]
+Dock=1
+Order=3
+Show=1
+X=-1
+Y=-1
+W=275
+H=55
+[GUI/ToolBars/Mixer]
+Dock=1
+Order=4
+Show=1
+X=-1
+Y=-1
+W=323
+H=27
+[GUI/ToolBars/Edit]
+Dock=1
+Order=5
+Show=1
+X=-1
+Y=-1
+W=336
+H=27
+[GUI/ToolBars/Transcription]
+Dock=1
+Order=6
+Show=1
+X=-1
+Y=-1
+W=140
+H=27
+[GUI/ToolBars/Selection]
+Dock=2
+Order=1
+Show=1
+X=-1
+Y=-1
+W=630
+H=55
+[GUI/ToolBars/Device]
+Dock=0
+Order=0
+Show=0
+X=-1
+Y=-1
+W=659
+H=27
+[Window]
+X=26
+Y=28
+Width=701
+Height=620
+Maximized=0
+Normal_X=26
+Normal_Y=28
+Normal_Width=701
+Normal_Height=620
+Iconized=0
+[SamplingRate]
+DefaultProjectSampleRate=44100
+DefaultProjectSampleFormat=262159
+[Quality]
+SampleRateConverter=2
+DitherAlgorithm=0
+HQSampleRateConverter=0
+HQDitherAlgorithm=3
+[Locale]
+Language=
+[Batch]
+CleanSpeechMode=0
+[FileFormats]
+CopyOrEditUncompressedData=edit
+ExportDownMix=1
+SaveProjectWithDependencies=ask
+[AudioFiles]
+NormalizeOnLoad=0
+ShowId3Dialog=1
+[Spectrum]
+FFTSize=256
+WindowType=3
+MinFreq=0
+MaxFreq=8000
+Gain=20
+Range=80
+FrequencyGain=0
+Grayscale=0
+[Warnings]
+FirstProjectSave=1
+DiskSpaceWarning=1
+MixStereo=1
+MixMono=1
+[Ladspa]
+Enable=1
+[Nyquist]
+Enable=1
+[VAMP]
+Enable=1
+[Prefs]
+PrefsCategory=0         
+EOF
+          ;;
+esac
+
