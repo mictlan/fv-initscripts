@@ -8,7 +8,8 @@ case "${1}" in
 	start)
 		logger "do we have a wireless device?"
         DEV=$(iwconfig 2> /dev/null|grep IEEE| awk '{ print $1}')
-        logger "setting up wifi" 
+        logger "found $DEV"
+        logger "setting up ad-hoc wireless node" 
         iwconfig $DEV mode ad-hoc essid XYZ
         logger "asigning address"
         ifconfig $DEV 10.10.10.10
