@@ -8,3 +8,4 @@ server - cambiar el servidor para 'hielo', predeterminado es localhost
 port - cambiar puerto de hielo, predeterminado es 8000
 mount - cambiar punto de montaje de hielo, predeterminado es flujos.ogg
 password - cambiar contraseña de hielo, predeterminado es hackme
+audio=jack - configurar sistema de sonido para utilizar jackd
