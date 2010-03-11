@@ -2,43 +2,142 @@
 
 set -e
 
-grep -qs " hielo" /proc/cmdline || exit 0
 
-SERVER=localhost
-MOUNT=flujos.ogg
-PORT=8000
-PASSWORD=hackme
+FV_SERVER=localhost
+FV_MOUNT=flujos.ogg
+FV_PORT=8000
+FV_PASSWORD=hackme
+FV_NAME="Flujos-Vivos"
+FV_DESCRIPTION="haz radio, crea flujos! "
+
+for ARGUMENT in $(cat /proc/cmdline); do
+  case "${ARGUMENT}" in
+        nfsroot=*)
+        FV_SERVER="${ARGUMENT#nfsroot=}" #fix by stripping :/tftproot/debian-live
+        ;;
+  esac
+done
+for ARGUMENT in $(cat /proc/cmdline); do
+  case "${ARGUMENT}" in
+        server=*)
+        FV_SERVER="${ARGUMENT#server=}"
+        ;;
+        mount=*)
+        FV_MOUNT="${ARGUMENT#mount=}"
+        ;;
+        password=*)
+        FV_PASSWORD="${ARGUMENT#password=}"
+        ;;
+        port=*)
+        FV_PORT="${ARGUMENT#PORT=}"
+        ;;
+  esac
+done
+
+logger "fv: setup system configurations"
+
+cat > /etc/default/flujos << EOF
+#Configuracion Predeterminado de Flujos
+server="${FV_SERVER}"
+port="${FV_PORT}"
+mount="${FV_MOUNT}"
+password="${FV_PASSWORD}"
+EOF
+
+logger "fv: setup mpd"
+cat > /etc/mpd.conf << EOF
+# configuration file for MPD
+music_directory "/home/radio/Musica"
+playlist_directory "/home/radio/.mpd/playlists"
+db_file "/home/radio/.mpd/tag_cache"
+log_file "/var/log/mpd/mpd.log"
+error_file "/var/log/mpd/errors.log"
+pid_file "/home/radio/.mpd/pid"
+state_file "/home/radio/.mpd/state"
+user "radio"
+default_permissions "read,add,control,admin"
+audio_output {
+        type "alsa"
+        name "alsa_MPD"
+        device "default"
+        format "44100:16:2"
+}
+audio_output {
+        type "jack"
+        name "jack_MPD"
+}
+audio_output {
+        type "shout"
+        name "Flujos-Vivos"
+        host "${FV_SERVER}"
+        port "${FV_PORT}"
+        mount "${FV_MOUNT}"
+        password "${FV_PASSWORD}"
+        quality "1.0"
+        format "44100:16:1"
+        user "source"
+        description "${FV_DESCRIPTION}"
+        genre "libre"
+        public "yes" 
+}
+mixer_type "software"
+filesystem_charset "UTF-8"
+id3v1_encoding "UTF-8"
+EOF
+
+logger "fv: setup user mpd config"
+ln -s /etc/mpd.conf /home/radio/.mpdconf
+
+logger "fv: setup darkice"
+cat > /etc/darkice.cfg.alsa << EOF
+[general]
+duration = 0 
+bufferSecs = 5
+reconnect = yes
+[input]
+device = default 
+sampleRate = 44100 
+bitsPerSample = 16
+channel = 2 
+[icecast2-0]
+bitrateMode = vbr
+format = vorbis
+quality = 0.1
+server = "${FV_SERVER}" 
+port = "${FV_PORT}"
+password = "${FV_PASSWORD}"
+mountPoint = "${FV_MOUNT}"
+name = "${FV_NAME}"
+description = "${FV_DESCRIPTION}"
+url = http://radio.flujos.org
+genre = streaming con software libre 
+EOF
+
+logger "fv: make darkice default to alsa"
+if [ -f /etc/darkice.cfg  ]; then 
+    rm /etc/darkice.cfg
+fi
+ln -s /etc/darkice.cfg.alsa /etc/darkice.cfg
+
+logger "fv: setup flujconf"
+ln -s /etc/darkice.cfg /home/radio/.darkice.cfg
+logger "fv: setup theorur" # fixme
+
+grep -qs " hielo" /proc/cmdline || exit 0
 
 case "${1}" in
 	start)
-		logger "congelando"
-        logger "servidor de flujos"
+		logger "fv: congelando"
+        logger "fv: servidor de flujos"
         icecast2 -b -c /etc/icecast2/icecast.xml > /dev/null
-        logger "record volumen a 85%, entrada: mic"
+        logger "fv: record volumen a 85%, entrada: mic"
         aumix -v0 -m R -i85
         sleep 1
-        logger "darkice"
-        for ARGUMENT in $(cat /proc/cmdline); do
-          case "${ARGUMENT}" in
-                server=*)
-                SERVER="${ARGUMENT#server=}"
-                ;;
-                mount=*)
-                MOUNT="${ARGUMENT#mount=}"
-                ;;
-                password=*)
-                PASSWORD="${ARGUMENT#password=}"
-                ;;
-                port=*)
-                PORT="${ARGUMENT#PORT=}"
-                ;;
-          esac
-        done
-        #darkice -c /etc/darkice.cfg > /dev/null &
-        logger "grabar audio y enviarlo a $SERVER:$PORT/$MOUNT"
+        logger "fv: grabar audio y enviarlo a $SERVER:$PORT/$MOUNT"
         arecord -d0 -c2 -f S16_LE -r 44100 -twav | \ 
         oggenc --quiet - -o  - | \ 
         oggfwd -p -n flujos-vivos -u http://radio.flujos.org \
-        $SERVER $PORT $PASSWORD /$MOUNT &
+        $FV_SERVER $FV_PORT $FV_PASSWORD /$FV_MOUNT &
         ;;
 esac
+
